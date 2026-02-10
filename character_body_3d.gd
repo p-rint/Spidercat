@@ -18,6 +18,10 @@ var targetRot = 0
 var webZipTarget : Vector3
 var webZipSpeed = 50
 
+var swingTarget :Vector3
+
+var isSwing = false
+
 
 @onready var StateManager : Node = $scripts/StateManager
 @onready var InputManager: Node = $scripts/Input
@@ -57,5 +61,17 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
+
+	if isSwing:
+		swing()
+
 	move_and_slide()
 	
+
+
+
+
+func swing():
+	if (swingTarget.distance_to(position) > 10):
+		position = swingTarget + (position - swingTarget).normalized() * 10
+		print("A")

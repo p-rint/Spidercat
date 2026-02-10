@@ -1,10 +1,18 @@
-[gd_scene load_steps=17 format=3 uid="uid://dj3t27vm0xby2"]
+[gd_scene load_steps=15 format=3 uid="uid://dj3t27vm0xby2"]
 
-[ext_resource type="Script" uid="uid://cn0eqy8orav5m" path="res://character_body_3d.gd" id="1_glv2v"]
 [ext_resource type="Texture2D" uid="uid://dknvyg67svuh0" path="res://icon.svg" id="1_uu6xs"]
+[ext_resource type="Script" uid="uid://umwdhiylxtll" path="res://Player.gd" id="2_fos0i"]
 [ext_resource type="Script" uid="uid://chy4af3teqcso" path="res://cam_pivot.gd" id="3_r0du0"]
-[ext_resource type="Script" uid="uid://b18ldau08dkxu" path="res://states.gd" id="4_cm0pq"]
-[ext_resource type="Script" uid="uid://8pfjvfv4lpcf" path="res://input.gd" id="6_lgr22"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_uu6xs"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0du0"]
+albedo_texture = ExtResource("1_uu6xs")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r0du0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_glv2v"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -17,16 +25,6 @@ sky_material = SubResource("ProceduralSkyMaterial_glv2v")
 background_mode = 2
 sky = SubResource("Sky_uu6xs")
 tonemap_mode = 2
-
-[sub_resource type="BoxMesh" id="BoxMesh_uu6xs"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0du0"]
-albedo_texture = ExtResource("1_uu6xs")
-uv1_scale = Vector3(0.2, 0.2, 0.2)
-uv1_triplanar = true
-uv1_world_triplanar = true
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_r0du0"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_cm0pq"]
 
@@ -52,32 +50,34 @@ stencil_flags = 2
 
 [node name="Node3D" type="Node3D"]
 
+[node name="Map" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Map"]
+transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Map/Floor"]
+mesh = SubResource("BoxMesh_uu6xs")
+surface_material_override/0 = SubResource("StandardMaterial3D_r0du0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Floor"]
+shape = SubResource("BoxShape3D_r0du0")
+
+[node name="Building" type="StaticBody3D" parent="Map"]
+transform = Transform3D(20, 0, 0, 0, 100, 0, 0, 0, 20, 50, 0, 50)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Map/Building"]
+mesh = SubResource("BoxMesh_uu6xs")
+surface_material_override/0 = SubResource("StandardMaterial3D_r0du0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Building"]
+shape = SubResource("BoxShape3D_r0du0")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_r0du0")
 
-[node name="Floor" type="StaticBody3D" parent="."]
-transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 0, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
-mesh = SubResource("BoxMesh_uu6xs")
-surface_material_override/0 = SubResource("StandardMaterial3D_r0du0")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("BoxShape3D_r0du0")
-
-[node name="Building" type="StaticBody3D" parent="."]
-transform = Transform3D(20, 0, 0, 0, 100, 0, 0, 0, 20, 50, 0, 50)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Building"]
-mesh = SubResource("BoxMesh_uu6xs")
-surface_material_override/0 = SubResource("StandardMaterial3D_r0du0")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Building"]
-shape = SubResource("BoxShape3D_r0du0")
-
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6878622, 0)
-script = ExtResource("1_glv2v")
+script = ExtResource("2_fos0i")
 
 [node name="RayCast3D" type="RayCast3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5940673, 1.7912776, 1.6572406)
@@ -88,10 +88,10 @@ target_position = Vector3(0, 0, -300)
 [node name="Mesh" type="MeshInstance3D" parent="Player/Character"]
 mesh = SubResource("BoxMesh_cm0pq")
 
-[node name="CamPivot" type="Node3D" parent="Player"]
+[node name="CameraPivot" type="Node3D" parent="Player"]
 script = ExtResource("3_r0du0")
 
-[node name="Camera3D" type="Camera3D" parent="Player/CamPivot"]
+[node name="Camera3D" type="Camera3D" parent="Player/CameraPivot"]
 transform = Transform3D(1, 0, 0, 0, 0.94240236, 0.33448133, 0, -0.33448133, 0.94240236, 0, 1.3411617, 1.7695494)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
@@ -100,7 +100,6 @@ shape = SubResource("BoxShape3D_glv2v")
 [node name="scripts" type="Node" parent="Player"]
 
 [node name="StateManager" type="Node" parent="Player/scripts"]
-script = ExtResource("4_cm0pq")
 
 [node name="zipTime" type="Timer" parent="Player/scripts/StateManager"]
 one_shot = true
@@ -108,7 +107,6 @@ one_shot = true
 [node name="Move" type="Node" parent="Player/scripts"]
 
 [node name="Input" type="Node" parent="Player/scripts"]
-script = ExtResource("6_lgr22")
 
 [node name="tp" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.217945, 53.624706, 50.926018)

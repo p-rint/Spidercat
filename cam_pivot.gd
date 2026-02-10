@@ -1,17 +1,17 @@
 extends Node3D
 
+var dt : float
+
 var mouseLock = false
 
 @onready var player: CharacterBody3D = $".."
 
-@onready var ray = $"../RayCast3D"
-
-@onready var web_target: MeshInstance3D = $"../../WebTarget"
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#DON'T DO TS
+	Input.mouse_mode = (Input.MOUSE_MODE_CAPTURED)
 	pass # Replace with function body.
 	
 
@@ -25,22 +25,24 @@ func _input(event: InputEvent) -> void:
 		
 		rotation.y = wrapf(rotation.y, -PI, PI)
 		rotation.x = clampf(rotation.x,-PI/2,PI/2)
+	
+	if event is InputEventMouseButton and event.pressed:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
-		ray.target_position = -basis.z.normalized() * 100
-		if ray.is_colliding():
-			#print(ray.get_collider())
-			web_target.global_position = ray.get_collision_point()
-			
+	
+	if event.is_action_pressed("Tab"):
+		print("AAAA")
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if event.is_action_released("Tab"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	dt = delta
 	
-	if Input.is_action_just_pressed("Escape"):
-		if mouseLock:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-			
-		else:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		mouseLock = not mouseLock
-	
+
+func flatten(vec : Vector3) -> Vector3:
+	return (vec * Vector3(1,0,1))
 	

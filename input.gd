@@ -19,8 +19,11 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("Teleport"):
 		teleport()
 		
+	if Input.is_action_just_pressed("Zip"):
+		zip()
 	if Input.is_action_just_pressed("Swing"):
 		swing()
+		
 	
 	
 	input_dir = Input.get_vector("Left", "Right", "Up", "Down")
@@ -35,7 +38,7 @@ func teleport() -> void:
 
 
 
-func swing() -> void:
+func zip() -> void:
 	#print("s")
 	plr.webZipTarget = -(plr.position - $"../../../WebTarget".position)
 	
@@ -44,6 +47,11 @@ func swing() -> void:
 	zipTimer.start(dist/plr.webZipSpeed)
 	plr.state = StateManager.States.WEBZIP
 	
+	
+
+func swing() -> void:
+	plr.isSwing = true
+	plr.swingTarget = $"../../../WebTarget".position
 	
 	
 	
